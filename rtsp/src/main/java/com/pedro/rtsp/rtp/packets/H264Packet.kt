@@ -80,7 +80,8 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
         sendKeyFrame = true
 
 
-        val bufferSei = ByteBuffer.wrap(UtilsSei.muxSEI( "${System.currentTimeMillis()}"))
+//        val bufferSei = ByteBuffer.wrap(UtilsSei.muxSEI( "${System.currentTimeMillis()}"))
+        val bufferSei = ByteBuffer.wrap(UtilsSei.muxSEI( ""))
         val byteArraySei = bufferSei.toByteArray()
         val rtpFrameSei = RtpFrame(byteArraySei, rtpTs, byteArraySei.size + RtpConstants.RTP_HEADER_LENGTH, channelIdentifier)
         frames.add(rtpFrameSei)
