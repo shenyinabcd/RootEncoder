@@ -50,7 +50,7 @@ import javax.net.ssl.TrustManager
 /**
  * Created by pedro on 10/02/17.
  */
-class RtspClient(private val connectChecker: ConnectChecker) {
+class RtspClient(private val connectChecker: ConnectChecker, val seiDataProvider: SeiDataProvider) {
 
   private val TAG = "RtspClient"
 
@@ -72,7 +72,7 @@ class RtspClient(private val connectChecker: ConnectChecker) {
   private var tlsEnabled = false
   private var certificates: TrustManager? = null
   private val commandsManager: CommandsManager = CommandsManager()
-  private val rtspSender: RtspSender = RtspSender(connectChecker, commandsManager)
+  private val rtspSender: RtspSender = RtspSender(connectChecker, commandsManager, seiDataProvider)
   private var url: String? = null
   private var doingRetry = false
   private var numRetry = 0

@@ -20,10 +20,10 @@ import android.util.Log
 import com.pedro.common.frame.MediaFrame
 import com.pedro.common.removeInfo
 import com.pedro.common.toByteArray
+import com.pedro.rtsp.rtsp.SeiDataProvider
 import com.pedro.rtsp.rtsp.RtpFrame
 import com.pedro.rtsp.utils.RtpConstants
 import com.pedro.rtsp.utils.getVideoStartCodeSize
-import com.pedro.rtsp.utils.setLong
 import java.nio.ByteBuffer
 import kotlin.experimental.and
 
@@ -32,7 +32,7 @@ import kotlin.experimental.and
  *
  * RFC 3984
  */
-class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
+class H264Packet(val seiDataProvider: SeiDataProvider): BasePacket(RtpConstants.clockVideoFrequency,
   RtpConstants.payloadType + RtpConstants.trackVideo
 ) {
 
@@ -79,7 +79,8 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
 
 
 //        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( "${System.currentTimeMillis()}"))
-        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( "hello"))
+//        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( "hello"))
+        val bufferSeiData = ByteBuffer.wrap(seiDataProvider.getImuData())
         val arraySeiData = bufferSeiData.toByteArray()
 
         val bufferSei = getBuffer(arraySeiData.size + RtpConstants.RTP_HEADER_LENGTH)
@@ -105,13 +106,6 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
         updateSeq(buffer)
         val rtpFrame = RtpFrame(buffer, rtpTs, buffer.size, channelIdentifier)
         frames.add(rtpFrame)
-
-//        val bufferNaluSei = getBufferNaluSei()
-//        val bufferSei = getBuffer(bufferNaluSei.size + RtpConstants.RTP_HEADER_LENGTH + 1)
-//        bufferSei[RtpConstants.RTP_HEADER_LENGTH] = header[header.size - 1]
-//        bufferNaluSei.get(bufferSei, RtpConstants.RTP_HEADER_LENGTH + 1, naluLength)
-//        val rtpFrameSei = RtpFrame(bufferSei, rtpTs, bufferSei.size, channelIdentifier)
-//        frames.add(rtpFrameSei)
       } else {
         // Set FU-A header
         header[1] = header[header.size - 1] and 0x1F // FU header type

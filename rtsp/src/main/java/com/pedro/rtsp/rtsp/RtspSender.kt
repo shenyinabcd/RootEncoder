@@ -43,10 +43,11 @@ import java.util.concurrent.*
  */
 class RtspSender(
   connectChecker: ConnectChecker,
-  private val commandsManager: CommandsManager
+  private val commandsManager: CommandsManager,
+  val seiDataProvider: SeiDataProvider
 ): BaseSender(connectChecker, "RtspSender") {
 
-  private var videoPacket: BasePacket = H264Packet()
+  private var videoPacket: BasePacket = H264Packet(seiDataProvider)
   private var audioPacket: BasePacket = AacPacket()
   private var rtpSocket: BaseRtpSocket? = null
   private var baseSenderReport: BaseSenderReport? = null
@@ -71,7 +72,7 @@ class RtspSender(
     videoPacket = when (commandsManager.videoCodec) {
       VideoCodec.H264 -> {
         if (pps == null) throw IllegalArgumentException("pps can't be null with h264")
-        H264Packet().apply { sendVideoInfo(sps, pps) }
+        H264Packet(seiDataProvider).apply { sendVideoInfo(sps, pps) }
       }
       VideoCodec.H265 -> {
         if (vps == null || pps == null) throw IllegalArgumentException("pps or vps can't be null with h265")
