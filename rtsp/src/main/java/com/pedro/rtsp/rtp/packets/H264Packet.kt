@@ -70,8 +70,6 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
 
         val buffer = getBuffer(it.size + RtpConstants.RTP_HEADER_LENGTH)
         val rtpTs = updateTimeStamp(buffer, ts)
-
-
         markPacket(buffer) //mark end frame
         System.arraycopy(it, 0, buffer, RtpConstants.RTP_HEADER_LENGTH, it.size)
         updateSeq(buffer)
@@ -80,10 +78,16 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
         sendKeyFrame = true
 
 
-//        val bufferSei = ByteBuffer.wrap(UtilsSei.muxSEI( "${System.currentTimeMillis()}"))
-        val bufferSei = ByteBuffer.wrap(UtilsSei.muxSEI( ""))
-        val byteArraySei = bufferSei.toByteArray()
-        val rtpFrameSei = RtpFrame(byteArraySei, rtpTs, byteArraySei.size + RtpConstants.RTP_HEADER_LENGTH, channelIdentifier)
+//        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( "${System.currentTimeMillis()}"))
+        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( ""))
+        val arraySeiData = bufferSeiData.toByteArray()
+
+        val bufferSei = getBuffer(arraySeiData.size + RtpConstants.RTP_HEADER_LENGTH)
+        val rtpTsSei = updateTimeStamp(bufferSei, ts)
+        markPacket(bufferSei)
+        System.arraycopy(arraySeiData, 0, bufferSei, RtpConstants.RTP_HEADER_LENGTH, arraySeiData.size)
+        updateSeq(bufferSei)
+        val rtpFrameSei = RtpFrame(bufferSei, rtpTsSei, arraySeiData.size + RtpConstants.RTP_HEADER_LENGTH, channelIdentifier)
         frames.add(rtpFrameSei)
 
       } ?: run {
