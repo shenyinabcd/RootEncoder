@@ -1,5 +1,7 @@
 package com.pedro.rtsp.rtp.packets
 
+import com.pedro.rtsp.utils.decodeHex
+
 class UtilsSei {
     companion object {
         public fun muxSEI(msg: String): ByteArray {
@@ -25,7 +27,8 @@ class UtilsSei {
             }
 
             val size = Integer.toHexString(contentSize)
-            val contentLastSize: ByteArray = Hex.decodeHex(size)
+//            val contentLastSize: ByteArray = Hex.decodeHex(size)
+            val contentLastSize: ByteArray = size.decodeHex()
             val contentFirstSize = ByteArray(ffCount)
             for (i in 0 until ffCount) {
                 contentFirstSize[i] = 0xff.toByte()
@@ -34,6 +37,12 @@ class UtilsSei {
 
             return combineArrays(seiType, sei_content_size, seiUuid, seiContent, seiEnd)
         }
+
+//        private fun convertIntToByteArray(data: Int) : ByteArray {
+//            return byteArrayOf((data shr 0).toByte(),
+//                (data shr 8).toByte(),(data shr 16).toByte(),(data shr 24).toByte()
+//            )
+//        }
 
         private fun combineArrays(vararg a: ByteArray): ByteArray {
             var massLength = 0

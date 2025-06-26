@@ -53,7 +53,8 @@ afterEvaluate {
 
 dependencies {
   implementation(libs.kotlinx.coroutines.android)
-  testImplementation(libs.kotlinx.coroutines.test)
+    implementation(libs.firebase.crashlytics.buildtools)
+    testImplementation(libs.kotlinx.coroutines.test)
   testImplementation(libs.junit)
   testImplementation(libs.mockito.kotlin)
   api(project(":common"))
