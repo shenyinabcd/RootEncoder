@@ -79,7 +79,7 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
 
 
 //        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( "${System.currentTimeMillis()}"))
-        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( ""))
+        val bufferSeiData = ByteBuffer.wrap(UtilsSei.muxSEI( "hello"))
         val arraySeiData = bufferSeiData.toByteArray()
 
         val bufferSei = getBuffer(arraySeiData.size + RtpConstants.RTP_HEADER_LENGTH)
