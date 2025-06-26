@@ -44,7 +44,7 @@ import java.util.concurrent.*
 class RtspSender(
   connectChecker: ConnectChecker,
   private val commandsManager: CommandsManager,
-  val seiDataProvider: SeiDataProvider
+  val seiDataProvider: SeiDataProvider?
 ): BaseSender(connectChecker, "RtspSender") {
 
   private var videoPacket: BasePacket = H264Packet(seiDataProvider)

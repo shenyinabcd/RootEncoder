@@ -50,7 +50,7 @@ import javax.net.ssl.TrustManager
 /**
  * Created by pedro on 10/02/17.
  */
-class RtspClient(private val connectChecker: ConnectChecker, val seiDataProvider: SeiDataProvider) {
+class RtspClient(private val connectChecker: ConnectChecker, seiDataProvider: SeiDataProvider? = null) {
 
   private val TAG = "RtspClient"
 
