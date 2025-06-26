@@ -23,6 +23,7 @@ import com.pedro.common.toByteArray
 import com.pedro.rtsp.rtsp.RtpFrame
 import com.pedro.rtsp.utils.RtpConstants
 import com.pedro.rtsp.utils.getVideoStartCodeSize
+import com.pedro.rtsp.utils.setLong
 import java.nio.ByteBuffer
 import kotlin.experimental.and
 
@@ -73,6 +74,13 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
         val rtpFrame = RtpFrame(buffer, rtpTs, it.size + RtpConstants.RTP_HEADER_LENGTH, channelIdentifier)
         frames.add(rtpFrame)
         sendKeyFrame = true
+
+
+        val bufferSei = ByteBuffer.wrap(UtilsSei.muxSEI( "${System.currentTimeMillis()}"))
+        val byteArraySei = bufferSei.toByteArray()
+        val rtpFrameSei = RtpFrame(byteArraySei, rtpTs, byteArraySei.size + RtpConstants.RTP_HEADER_LENGTH, channelIdentifier)
+        frames.add(rtpFrameSei)
+
       } ?: run {
         Log.i(TAG, "can't create key frame because setSpsPps was not called")
       }
@@ -88,6 +96,13 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
         updateSeq(buffer)
         val rtpFrame = RtpFrame(buffer, rtpTs, buffer.size, channelIdentifier)
         frames.add(rtpFrame)
+
+//        val bufferNaluSei = getBufferNaluSei()
+//        val bufferSei = getBuffer(bufferNaluSei.size + RtpConstants.RTP_HEADER_LENGTH + 1)
+//        bufferSei[RtpConstants.RTP_HEADER_LENGTH] = header[header.size - 1]
+//        bufferNaluSei.get(bufferSei, RtpConstants.RTP_HEADER_LENGTH + 1, naluLength)
+//        val rtpFrameSei = RtpFrame(bufferSei, rtpTs, bufferSei.size, channelIdentifier)
+//        frames.add(rtpFrameSei)
       } else {
         // Set FU-A header
         header[1] = header[header.size - 1] and 0x1F // FU header type
@@ -126,6 +141,20 @@ class H264Packet: BasePacket(RtpConstants.clockVideoFrequency,
     }
     if (frames.isNotEmpty()) callback(frames)
   }
+
+//  private fun getBufferNaluSei(): ByteArray {
+//    val size = 26
+//    val buffer = ByteArray(size)
+//    buffer.setLong(1, 0, 4)
+//    buffer[4] = 6
+//    buffer[5] = 5
+//    buffer[6] = 0x12
+//
+//    buffer[23] = 5
+//    buffer[24] = 0
+//    buffer[25] = 80
+//    return buffer
+//  }
 
   private fun setSpsPps(sps: ByteArray, pps: ByteArray) {
     this.sps = sps
